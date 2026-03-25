@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codebase to Course - Interactive Learning</title>
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --card: #1a1a1a;
+            --text: #e5e5e5;
+            --accent: #ff6b35;
+            --accent-dim: #ff6b3533;
+            --code: #1e1e1e;
+            --keyword: #ff79c6;
+            --string: #f1fa8c;
+            --comment: #6272a4;
+            --function: #50fa7b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 4rem 0;
+            border-bottom: 2px solid var(--accent-dim);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 1rem 0;
+            border-bottom: 1px solid #333;
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        nav a:hover {
+            background: var(--accent-dim);
+        }
+        
+        section {
+            padding: 3rem 0;
+            border-bottom: 1px solid #222;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--function);
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #333;
+        }
+        
+        .code-block {
+            background: var(--code);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .keyword { color: var(--keyword); }
+        .string { color: var(--string); }
+        .comment { color: var(--comment); }
+        .function { color: var(--function); }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-dim), transparent);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .feature {
+            background: var(--card);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quiz {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .quiz h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .quiz-option {
+            padding: 1rem;
+            background: #222;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover {
+            background: #333;
+        }
+        
+        code {
+            background: var(--code);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .glossary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .glossary-term {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: help;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    
+    <header>
+        <h1>🚀 Codebase to Course</h1>
+        <p class="tagline">Turn any codebase into a stunning, interactive HTML course for vibe coders</p>
+    </header>
+    
+    <nav>
+        <a href="#what">What is it?</a>
+        <a href="#how">How it Works</a>
+        <a href="#features">Features</a>
+        <a href="#use">How to Use</a>
+        <a href="#quiz">Quiz</a>
+    </nav>
+    
+    <section id="what">
+        <h2>What is Codebase to Course?</h2>
+        <p>A <strong>Claude Code skill</strong> that transforms any GitHub repository into a beautiful, self-contained HTML course. Perfect for "vibe coders" — people who build software using AI tools without traditional CS education.</p>
+        
+        <div class="highlight-box">
+            <strong>🎯 Who is this for?</strong><br>
+            You build things with AI coding tools, but sometimes don't fully understand how the code works. This tool teaches you — not by lecturing, but by tracing what happens when you use the app.
+        </div>
+    </section>
+    
+    <section id="how">
+        <h2>How It Works</h2>
+        
+        <div class="card">
+            <h3>1. Point at a Repo</h3>
+            <p>Give Claude Code a GitHub repository URL. It analyzes the entire codebase structure.</p>
+        </div>
+        
+        <div class="card">
+            <h3>2. Get a Course</h3>
+            <p>Out comes a single HTML file — no dependencies, works offline, teaches you how the code works.</p>
+        </div>
+        
+        <div class="card">
+            <h3>3. Learn by Doing</h3>
+            <p>Instead of memorizing concepts, you experience the app working first — then understand how it works.</p>
+        </div>
+    </section>
+    
+    <section id="features">
+        <h2>✨ Key Features</h2>
+        
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">📜</div>
+                <h3>Scroll-Based Modules</h3>
+                <p>Progress tracking & keyboard navigation for smooth learning</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>Code ↔ Plain English</h3>
+                <p>Real code on left, what it means on the right — side by side</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎬</div>
+                <h3>Animated Visualizations</h3>
+                <p>Data flow animations, architecture diagrams, component interactions</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">❓</div>
+                <h3>Interactive Quizzes</h3>
+                <p>Test application, not memorization — "Where would you look first?"</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <h3>Glossary Tooltips</h3>
+                <p>Hover any term for plain-English definitions</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Warm Design</h3>
+                <p>Not the typical purple-gradient AI look — distinctive & readable</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="use">
+        <h2>📖 How to Use It</h2>
+        
+        <h3>Installation</h3>
+        <div class="code-block">
+<span class="comment"># Copy the skill folder to Claude Code skills</span>
+cp -r codebase-to-course ~/.claude/skills/
+        </div>
+        
+        <h3>Trigger Commands</h3>
+        <div class="code-block">
+<span class="string">"Turn this codebase into an interactive course"</span>
+<span class="string">"Turn this into a course"</span>
+<span class="string">"Explain this codebase interactively"</span>
+<span class="string">"Make a course from this project"</span>
+<span class="string">"Teach me how this code works"</span>
+<span class="string">"Interactive tutorial from this code"</span>
+        </div>
+        
+        <h3>File Structure</h3>
+        <div class="code-block">
+codebase-to-course/
+├── SKILL.md <span class="comment"># Main skill instructions</span>
+└── references/
+    ├── design-system.md <span class="comment"># CSS, typography, colors</span>
+    └── interactive-elements.md <span class="comment"># Quiz & animation patterns</span>
+        </div>
+    </section>
+    
+    <section id="quiz">
+        <h2>❓ Quick Quiz</h2>
+        
+        <div class="quiz">
+            <h4>Question: You want to add a "favorites" feature to an app. Based on what you learned, which files would likely need changes?</h4>
+            <div class="quiz-options">
+                <div class="quiz-option">A) Just the UI components</div>
+                <div class="quiz-option">B) Database, API routes, and UI components</div>
+                <div class="quiz-option">C) Only the config files</div>
+                <div class="quiz-option">D) Nothing — AI does it automatically</div>
+            </div>
+        </div>
+        
+        <div class="highlight-box">
+            <strong>💡 Key Insight:</strong> The course approach inverts traditional CS education. Instead of memorizing for years → building something → finally understanding (where most quit), you: build something → experience it → now understand how it works.
+        </div>
+    </section>
+    
+    <section id="glossary">
+        <h2>📚 Glossary</h2>
+        
+        <div class="glossary">
+            <span class="glossary-term" title="Software that follows your instructions in natural language">Vibe Coder</span>
+            <span class="glossary-term" title="Natural language instructions to AI">Prompt</span>
+            <span class="glossary-term" title="A package of code others can use">Repository</span>
+            <span class="glossary-term" title="Code you run in your browser with no internet needed">Offline HTML</span>
+            <span class="glossary-term" title="Fake AI answers that look real">Hallucinations</span>
+            <span class="glossary-term" title="AI that repeats the same failed approach">Bug Loops</span>
+        </div>
+    </section>
+    
+    <footer>
+        <p>🎓 Built by <a href="https://x.com/zarazhangrui" style="color: var(--accent);">Zara</a> with Claude Code</p>
+        <p><small>Course generated by Doro's repo-to-course skill</small></p>
+    </footer>
+    
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+        
+        // Quiz interaction
+        document.querySelectorAll('.quiz-option').forEach((option, index) => {
+            option.addEventListener('click', () => {
+                const correct = index === 1;
+                option.style.background = correct ? '#2d5a3d' : '#5a2d2d';
+                option.innerHTML += correct ? ' ✅ Correct!' : ' ❌ Try again';
+            });
+        });
+    </script>
+</body>
+</html>
