@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Dense BYOK - AI Co-Scientist</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --border: #2a2a3a;
+            --text: #e4e4e7;
+            --muted: #71717a;
+            --accent: #22d3ee;
+            --accent-dim: #22d3ee22;
+            --purple: #a78bfa;
+            --success: #4ade80;
+            --warning: #fbbf24;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--accent-dim), transparent);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+        
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            z-index: 100;
+        }
+        
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        nav a:hover { background: var(--accent-dim); }
+        
+        section { padding: 2rem 0; border-bottom: 1px solid var(--border); }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; color: var(--text); }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .feature {
+            background: var(--card);
+            padding: 1.2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-dim), rgba(167,139,250,0.1));
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .highlight-box.tip { border-color: var(--success); }
+        .highlight-box.warning { border-color: var(--warning); background: rgba(251,191,36,0.1); }
+        
+        code {
+            background: #1e1e2e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            overflow-x: auto;
+            display: block;
+            margin: 0.5rem 0;
+        }
+        
+        .requirements {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .req-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .req-icon { font-size: 1.5rem; }
+        
+        .req-details strong { display: block; color: var(--text); }
+        .req-details span { font-size: 0.9rem; color: var(--muted); }
+        
+        .quiz {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .quiz h4 { color: var(--accent); margin-bottom: 1rem; }
+        
+        .quiz-option {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover { background: #1a1a24; }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    
+    <header>
+        <h1>🧬 K-Dense BYOK</h1>
+        <p class="tagline">Your own AI co-scientist, running locally on your desktop</p>
+        <span class="badge">🔬 Scientific AI</span>
+        <span class="badge">💻 Local Run</span>
+    </header>
+    
+    <nav>
+        <a href="#what">What is it?</a>
+        <a href="#features">Features</a>
+        <a href="#requirements">Requirements</a>
+        <a href="#setup">Setup</a>
+        <a href="#architecture">How it Works</a>
+    </nav>
+    
+    <section id="what">
+        <h2>🤖 What is K-Dense BYOK?</h2>
+        <p>K-Dense BYOK (Bring Your Own Keys) is an <strong>open-source desktop app</strong> that gives you an AI research assistant called <strong>Kady</strong>.</p>
+        
+        <div class="highlight-box tip">
+            <strong>💡 The Vision:</strong> Instead of paying subscriptions to single AI companies, you use your own API keys. You control which models to use, how much you spend, and where your data goes.
+        </div>
+        
+        <p>Built for scientists, analysts, and curious people who want a powerful AI workspace without being locked into one provider.</p>
+    </section>
+    
+    <section id="features">
+        <h2>✨ Key Features</h2>
+        
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">🧠</div>
+                <h3>AI Expert Delegation</h3>
+                <p>For complex tasks, Kady spins up specialized AI "experts" with 170+ scientific skills (bioinformatics, finance, data analysis, etc.)</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🌐</div>
+                <h3>Web Search</h3>
+                <p>Kady can look things up online and pull live information while working on your request</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📁</div>
+                <h3>File Management</h3>
+                <p>Upload files, create new ones, and preview them — all in a local sandbox. Handles almost any file type</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🧬</div>
+                <h3>250+ Scientific Databases</h3>
+                <p>Pre-loaded with scientific skills covering genomics, materials science, drug discovery, and more</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>40+ AI Models</h3>
+                <p>Switch between OpenAI, Anthropic, Google, xAI, Qwen and more via simple dropdown</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>326 Workflows</h3>
+                <p>Built-in templates across 22 disciplines — pick a workflow, fill variables, and launch</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">☁️</div>
+                <h3>Remote Compute</h3>
+                <p>Connect to Modal for heavy cloud workloads instead of your laptop</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Privacy First</h3>
+                <p>Runs locally on your machine — your data stays with you</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="requirements">
+        <h2>📋 Requirements</h2>
+        
+        <div class="requirements">
+            <div class="req-item">
+                <span class="req-icon">💻</span>
+                <div class="req-details">
+                    <strong>Computer running macOS or Linux</strong>
+                    <span>Windows users: use WSL</span>
+                </div>
+            </div>
+            
+            <div class="req-item">
+                <span class="req-icon">🔑</span>
+                <div class="req-details">
+                    <strong>OpenRouter API Key</strong>
+                    <span>Required — how AI models are accessed</span>
+                </div>
+            </div>
+            
+            <div class="req-item">
+                <span class="req-icon">🔍</span>
+                <div class="req-details">
+                    <strong>Parallel API Key (Optional)</strong>
+                    <span>Enables web search feature</span>
+                </div>
+            </div>
+            
+            <div class="req-item">
+                <span class="req-icon">☁️</span>
+                <div class="req-details">
+                    <strong>Modal Credentials (Optional)</strong>
+                    <span>Only for remote compute on heavy jobs</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="setup">
+        <h2>🚀 Setup Guide</h2>
+        
+        <h3>1. Clone the repo</h3>
+        <code>git clone https://github.com/K-Dense-AI/k-dense-byok.git
+cd k-dense-byok</code>
+        
+        <h3>2. Create .env file</h3>
+        <code>Create kady_agent/.env with:
+
+# Required
+OPENROUTER_API_KEY=paste-your-key-here
+
+# Optional (for web search)
+PARALLEL_API_KEY=paste-your-key-here
+
+# Leave as-is
+GOOGLE_GEMINI_BASE_URL=http://localhost:4000
+GEMINI_API_KEY=sk-litellm-local
+DEFAULT_AGENT_MODEL=openrouter/google/gemini-3.1-pro-preview</code>
+        
+        <h3>3. Run the app</h3>
+        <code>chmod +x start.sh
+./start.sh</code>
+        
+        <div class="highlight-box">
+            First run installs Python packages, Node.js, Gemini CLI, and downloads scientific skills — may take a few minutes.
+        </div>
+        
+        <h3>4. Access the app</h3>
+        <p>Browser opens to <strong>http://localhost:3000</strong></p>
+    </section>
+    
+    <section id="architecture">
+        <h2>🏗️ How it Works</h2>
+        
+        <div class="card">
+            <h3>Three Services Run Locally</h3>
+            <div style="margin-top:1rem;">
+                <p><strong>Frontend (port 3000)</strong> — Web interface, chat, file browser</p>
+                <p><strong>Backend (port 8000)</strong> — Runs Kady and coordinates expert tasks</p>
+                <p><strong>LiteLLM proxy (port 4000)</strong> — Routes AI requests to chosen model via OpenRouter</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>When you send a message:</h3>
+            <ol style="margin-left:1.5rem; margin-top:0.5rem;">
+                <li>Kady reads your message</li>
+                <li>Decides whether to answer directly or delegate to an expert</li>
+                <li>Uses tools (web search, file operations, scientific databases)</li>
+                <li>Streams response back to you</li>
+            </ol>
+        </div>
+        
+        <div class="card">
+            <h3>File Structure</h3>
+            <code>k-dense-byok/
+├── start.sh           ← Start everything
+├── server.py           ← Backend server
+├── kady_agent/         ← Kady's brain
+│   ├── .env           ← API keys
+│   ├── agent.py        ← Main agent
+│   └── tools/          ← Available tools
+├── web/               ← Frontend UI
+└── sandbox/            ← Workspace (created on first run)</code>
+        </div>
+    </section>
+    
+    <section id="quiz">
+        <h2>❓ Quick Quiz</h2>
+        
+        <div class="quiz">
+            <h4>Question: You want Kady to use a specific AI model. Where do you set it?</h4>
+            <div class="quiz-option">A) In the .env file as DEFAULT_AGENT_MODEL</div>
+            <div class="quiz-option">B) In the app's dropdown menu (for Kady only)</div>
+            <div class="quiz-option">C) You can't — it's hardcoded</div>
+        </div>
+        
+        <div class="highlight-box tip">
+            <strong>Note:</strong> Expert execution and coding tasks always use Gemini CLI through OpenRouter, regardless of dropdown selection.
+        </div>
+    </section>
+    
+    <footer>
+        <p>📚 Course generated by Doro's repo-to-course skill</p>
+        <p><a href="https://github.com/K-Dense-AI/k-dense-byok" style="color:var(--accent);">View Original Repo</a></p>
+    </footer>
+    
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
