@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free LLM APIs - Ultimate Guide</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --purple: #a371f7;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+        
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            z-index: 100;
+        }
+        
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        nav a:hover { background: rgba(88,166,255,0.1); }
+        
+        section { padding: 2rem 0; border-bottom: 1px solid var(--border); }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+        
+        h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+        }
+        
+        .provider {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .provider-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+        
+        .provider-flags {
+            font-size: 1.5rem;
+        }
+        
+        .models {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+        
+        .limits {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        
+        .limit {
+            background: rgba(63,185,80,0.1);
+            color: var(--success);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+        
+        .limit.warning { background: rgba(210,153,34,0.1); color: var(--warning); }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .badge-provider { background: rgba(88,166,255,0.2); color: var(--accent); }
+        .badge-third { background: rgba(163,113,247,0.2); color: var(--purple); }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(163,113,247,0.1));
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip { background: rgba(63,185,80,0.1); border-color: var(--success); }
+        .warning { background: rgba(210,153,34,0.1); border-color: var(--warning); }
+        
+        code {
+            background: rgba(110,118,129,0.2);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .quiz {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .quiz h4 { color: var(--accent); margin-bottom: 1rem; }
+        
+        .quiz-option {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quiz-option:hover { background: #1f2428; }
+        
+        .glossary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .glossary-term {
+            background: rgba(88,166,255,0.1);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.6rem; }
+            .provider { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    
+    <header>
+        <h1>🔑 Free LLM APIs</h1>
+        <p class="tagline">Permanent free tiers for text inference — never pay for prototyping again</p>
+    </header>
+    
+    <nav>
+        <a href="#overview">Overview</a>
+        <a href="#providers">Direct Providers</a>
+        <a href="#third-party">Third Party</a>
+        <a href="#tips">Pro Tips</a>
+        <a href="#quiz">Quiz</a>
+    </nav>
+    
+    <section id="overview">
+        <h2>📚 What is this?</h2>
+        <p>A curated list of <strong>free LLM APIs</strong> that actually work — no trial periods, no credit card required, no time limits.</p>
+        
+        <div class="highlight-box tip">
+            <strong>💡 Why it matters:</strong> You can build AI apps, test ideas, and prototype without spending a dime. Perfect for hobbyists, students, and bootstrapped developers.
+        </div>
+        
+        <h3>Two Types of Providers:</h3>
+        <div class="card">
+            <span class="badge badge-provider">Direct Providers</span> — Companies that train their own models (Cohere, Google, Mistral)
+        </div>
+        <div class="card">
+            <span class="badge badge-third">Third Party</span> — Platforms hosting open-weight models (Groq, Hugging Face, Ollama)
+        </div>
+    </section>
+    
+    <section id="providers">
+        <h2>🏢 Direct Providers (Model Trainers)</h2>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Cohere</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Command A, Command R+, Aya Expanse 32B +9 more</div>
+            <div class="limits">
+                <span class="limit">20 RPM</span>
+                <span class="limit">1K tokens/mo</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Google Gemini</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Gemini 2.5 Pro, Flash, Flash-Lite +4 more</div>
+            <div class="limits">
+                <span class="limit">5-15 RPM</span>
+                <span class="limit warning">100-1K RPD</span>
+            </div>
+            <p style="margin-top:0.5rem; font-size:0.85rem; color:var(--muted);">⚠️ Not available in EU, UK, or Switzerland</p>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Mistral AI</span>
+                <span class="provider-flags">🇪🇺</span>
+            </div>
+            <div class="models">Mistral Large 3, Small 3.1, Ministral 8B +3 more</div>
+            <div class="limits">
+                <span class="limit">1 req/sec</span>
+                <span class="limit">1B tokens/mo</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Zhipu AI (GLM)</span>
+                <span class="provider-flags">🇨🇳</span>
+            </div>
+            <div class="models">GLM-4.7-Flash, GLM-4.5-Flash, GLM-4.6V-Flash</div>
+            <div class="limits">
+                <span class="limit warning">Limits undocumented</span>
+            </div>
+        </div>
+    </section>
+    
+    <section id="third-party">
+        <h2>🌐 Third-Party Platforms</h2>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Groq</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Llama 3.3 70B, Llama 4 Scout, Kimi K2 +17 more</div>
+            <div class="limits">
+                <span class="limit">30 RPM</span>
+                <span class="limit">1K-14.4K RPD</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Cloudflare Workers AI</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Llama 3.3 70B, Qwen QwQ 32B +47 more</div>
+            <div class="limits">
+                <span class="limit">10K neurons/day</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">GitHub Models</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">GPT-4o, Llama 3.3 70B, DeepSeek-R1 +more</div>
+            <div class="limits">
+                <span class="limit">10-15 RPM</span>
+                <span class="limit">50-150 RPD</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Hugging Face</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Llama 3.3 70B, Qwen2.5 72B, Mistral 7B +many more</div>
+            <div class="limits">
+                <span class="limit">$0.10/mo free credits</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">OpenRouter</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">DeepSeek R1, Llama 3.3 70B, GPT-OSS-120B +29 more</div>
+            <div class="limits">
+                <span class="limit">20 RPM</span>
+                <span class="limit">50-1K RPD</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">NVIDIA NIM</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">Llama 3.3 70B, Mistral Large, Qwen3 235B +more</div>
+            <div class="limits">
+                <span class="limit">40 RPM</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="provider">
+                <span class="provider-name">Ollama Cloud</span>
+                <span class="provider-flags">🇺🇸</span>
+            </div>
+            <div class="models">DeepSeek-V3.2, Qwen3.5, Kimi-K2.5 +17 more</div>
+            <div class="limits">
+                <span class="limit warning">1 concurrent model</span>
+                <span class="limit">Light usage</span>
+            </div>
+        </div>
+    </section>
+    
+    <section id="tips">
+        <h2>💎 Pro Tips</h2>
+        
+        <div class="highlight-box tip">
+            <strong>🔑 Get API Keys:</strong> Click each provider's name to go to their API key page. Some require account creation but no payment.
+        </div>
+        
+        <div class="highlight-box">
+            <strong>🔄 OpenAI SDK Compatible:</strong> Most work with the standard OpenAI Python library — just change the base URL and API key!
+        </div>
+        
+        <div class="highlight-box warning">
+            <strong>⚠️ Watch Out For:</strong>
+            <ul style="margin-top:0.5rem; margin-left:1.5rem;">
+                <li>Some providers not available in EU/UK</li>
+                <li>Rate limits vary by model (larger models = stricter limits)</li>
+                <li>Free tier can be revoked — don't rely on it for production</li>
+            </ul>
+        </div>
+        
+        <div class="highlight-box">
+            <strong>🚀 Best for Beginners:</strong>
+            <ol style="margin-top:0.5rem; margin-left:1.5rem;">
+                <li><strong>Groq</strong> — Fastest inference, generous limits</li>
+                <li><strong>Cohere</strong> — Reliable, great models</li>
+                <li><strong>OpenRouter</strong> — Best model variety</li>
+            </ol>
+        </div>
+    </section>
+    
+    <section id="quiz">
+        <h2>❓ Quick Quiz</h2>
+        
+        <div class="quiz">
+            <h4>Question: You need to call an LLM API from your Python app. Which should you use?</h4>
+            <div class="quiz-option" onclick="this.style.background='#3fb950';this.innerHTML+=' ✅ Correct! OpenAI SDK works with most free providers'">A) cURL requests only</div>
+            <div class="quiz-option" onclick="this.style.background='#3fb950';this.innerHTML+=' ✅ Correct! Just change base_url and api_key'">B) OpenAI Python SDK (just change base URL)</div>
+            <div class="quiz-option" onclick="this.style.background='#f85149';this.innerHTML+=' ❌ Not necessary — SDK handles it'">C) Must write custom HTTP client</div>
+        </div>
+    </section>
+    
+    <section id="glossary">
+        <h2>📖 Glossary</h2>
+        <div class="glossary">
+            <span class="glossary-term" title="Requests Per Minute">RPM</span>
+            <span class="glossary-term" title="Requests Per Day">RPD</span>
+            <span class="glossary-term" title="Tokens per minute">TPM</span>
+            <span class="glossary-term" title="Application Programming Interface">API</span>
+            <span class="glossary-term" title="Large Language Model">LLM</span>
+            <span class="glossary-term" title="OpenAI SDK compatible">OpenAI-compatible</span>
+        </div>
+    </section>
+    
+    <footer>
+        <p>📚 Course generated by Doro's repo-to-course skill</p>
+        <p><a href="https://github.com/mnfst/awesome-free-llm-apis" style="color:var(--accent);">View Original Repo</a></p>
+    </footer>
+    
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
