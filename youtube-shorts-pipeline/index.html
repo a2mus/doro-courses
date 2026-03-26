@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Shorts Pipeline - Auto Video Generator</title>
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --card: #1a1a1a;
+            --border: #333;
+            --text: #e5e5e5;
+            --accent: #ff0000;
+            --accent-dim: #ff000022;
+            --youtube: #ff0000;
+            --ai: #9333ea;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--accent-dim), transparent);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--youtube), var(--ai));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--accent-dim);
+            color: var(--youtube);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.5rem 0.5rem 0 0;
+        }
+        
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            z-index: 100;
+        }
+        
+        nav a {
+            color: var(--youtube);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        nav a:hover { background: var(--accent-dim); }
+        
+        section { padding: 2rem 0; border-bottom: 1px solid var(--border); }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--youtube);
+        }
+        
+        h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .feature {
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .feature-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-dim), rgba(147,51,234,0.1));
+            border-left: 4px solid var(--youtube);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .highlight-box.tip { border-color: var(--success); }
+        .highlight-box.warning { border-color: var(--warning); background: rgba(245,158,11,0.1); }
+        
+        code {
+            background: #1e1e1e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            overflow-x: auto;
+            display: block;
+            margin: 0.5rem 0;
+            white-space: pre;
+        }
+        
+        .stage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .stage-table th, .stage-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stage-table th {
+            background: var(--card);
+            color: var(--youtube);
+        }
+        
+        .stage-table tr:hover { background: var(--card); }
+        
+        .cost-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .cost-item {
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .cost-item .price {
+            font-size: 1.5rem;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .cost-item .service { color: #888; font-size: 0.9rem; }
+        
+        .quiz {
+            background: var(--card);
+            border: 2px solid var(--youtube);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .quiz h4 { color: var(--youtube); margin-bottom: 1rem; }
+        
+        .quiz-option {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover { background: #222; }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--youtube), var(--ai));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.6rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    
+    <header>
+        <h1>🎬 YouTube Shorts Pipeline</h1>
+        <p class="tagline">Turn a topic into a published YouTube Short in minutes</p>
+        <div>
+            <span class="badge">🤖 AI-Powered</span>
+            <span class="badge">📺 YouTube</span>
+            <span class="badge">⚡ Automated</span>
+        </div>
+    </header>
+    
+    <nav>
+        <a href="#what">What is it?</a>
+        <a href="#features">Features</a>
+        <a href="#stages">Pipeline Stages</a>
+        <a href="#setup">Setup</a>
+        <a href="#costs">Costs</a>
+        <a href="#security">Security</a>
+    </nav>
+    
+    <section id="what">
+        <h2>🚀 What is this?</h2>
+        <p>A <strong>fully automated YouTube Shorts pipeline</strong> that turns a one-line topic into a published video in minutes.</p>
+        
+        <div class="highlight-box">
+            <strong>Pipeline Flow:</strong><br>
+            Research → Script → AI Visuals → Voiceover → Captions → Music → Upload
+        </div>
+        
+        <p>No video editing skills needed. Just provide a topic and let AI do the rest.</p>
+    </section>
+    
+    <section id="features">
+        <h2>✨ Key Features</h2>
+        
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">📝</div>
+                <h3>Script Generation</h3>
+                <p>Claude writes scripts using live DuckDuckGo research — no hallucinations</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>AI Visuals</h3>
+                <p>Gemini Imagen generates b-roll with Ken Burns effect</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎙️</div>
+                <h3>Voiceover</h3>
+                <p>ElevenLabs TTS (or macOS say fallback)</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">💬</div>
+                <h3>Burned-in Captions</h3>
+                <p>Word-by-word highlight via ASS subtitles using Whisper timestamps</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <h3>Background Music</h3>
+                <p>Royalty-free tracks with automatic voice ducking</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Auto Thumbnail</h3>
+                <p>Gemini Imagen + Pillow text overlay, auto-uploaded</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>Resume Capability</h3>
+                <p>Pipeline state tracked per stage — re-runs skip completed work</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Topic Discovery</h3>
+                <p>Find trending topics from Reddit, RSS, Google Trends, Twitter, TikTok</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="stages">
+        <h2>📋 Pipeline Stages</h2>
+        
+        <table class="stage-table">
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>What Happens</th>
+                    <th>Tools Used</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Draft</strong></td>
+                    <td>DuckDuckGo research → Claude script → b-roll prompts, thumbnail prompt</td>
+                    <td>Claude, DuckDuckGo</td>
+                </tr>
+                <tr>
+                    <td><strong>Produce</strong></td>
+                    <td>Gemini Imagen b-roll → ElevenLabs voiceover → Whisper captions → music → ffmpeg assembly</td>
+                    <td>Gemini, ElevenLabs, Whisper, ffmpeg</td>
+                </tr>
+                <tr>
+                    <td><strong>Upload</strong></td>
+                    <td>YouTube upload with metadata + SRT captions + AI thumbnail</td>
+                    <td>YouTube API</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="highlight-box tip">
+            <strong>Anti-Hallucination Gate:</strong> Claude only uses names and facts from live DuckDuckGo research — not training data.
+        </div>
+    </section>
+    
+    <section id="setup">
+        <h2>⚙️ Setup Guide</h2>
+        
+        <h3>1. Install dependencies</h3>
+        <code>pip install -r requirements.txt</code>
+        
+        <h3>2. Run pipeline (first run launches setup wizard)</h3>
+        <code>cd youtube-shorts-pipeline
+python -m pipeline run --news "your topic here" --dry-run</code>
+        
+        <h3>3. Set up YouTube OAuth (for upload)</h3>
+        <code>python scripts/setup_youtube_oauth.py</code>
+        
+        <h3>Key Commands</h3>
+        <code># Draft stage only (test script)
+python -m pipeline draft --news "your topic"
+
+# Auto-pick from trending
+python -m pipeline draft --discover --auto-pick
+
+# Produce video from draft
+python -m pipeline produce --draft ~/.youtube-shorts-pipeline/drafts/<id>.json
+
+# Full pipeline
+python -m pipeline run --news "your topic"
+
+# List trending topics
+python -m pipeline topics</code>
+        
+        <h3>Required API Keys (in config.json)</h3>
+        <div class="card">
+            <p><strong>ANTHROPIC_API_KEY</strong> — Required (Claude for script)</p>
+            <p><strong>GEMINI_API_KEY</strong> Required (Imagen for visuals)</p>
+            <p><strong>ELEVENLABS_API_KEY</strong> Optional (TTS, macOS say fallback)</p>
+        </div>
+    </section>
+    
+    <section id="costs">
+        <h2>💰 Cost Breakdown (per video)</h2>
+        
+        <div class="cost-table">
+            <div class="cost-item">
+                <div class="price">~$0.02</div>
+                <div class="service">Anthropic (Claude)</div>
+            </div>
+            <div class="cost-item">
+                <div class="price">~$0.04</div>
+                <div class="service">Gemini Imagen</div>
+            </div>
+            <div class="cost-item">
+                <div class="price">~$0.05</div>
+                <div class="service">ElevenLabs</div>
+            </div>
+            <div class="cost-item">
+                <div class="price">~$0.11</div>
+                <div class="service">Total</div>
+            </div>
+        </div>
+        
+        <div class="highlight-box">
+            About <strong>11 cents per Short</strong> — much cheaper than hiring a video editor!
+        </div>
+    </section>
+    
+    <section id="security">
+        <h2>🔒 Security Features</h2>
+        
+        <div class="card">
+            <p><strong>Credential Storage:</strong> config.json and youtube_token.json created with 0600 permissions (owner-only)</p>
+        </div>
+        <div class="card">
+            <p><strong>API Key Transmission:</strong> Gemini key sent via x-goog-api-key header, not URL query parameter</p>
+        </div>
+        <div class="card">
+            <p><strong>Error Handling:</strong> API error messages sanitized to never include credentials</p>
+        </div>
+        <div class="card">
+            <p><strong>Upload Privacy:</strong> Videos uploaded as private by default</p>
+        </div>
+        <div class="card">
+            <p><strong>OAuth Scope:</strong> Minimum scopes needed (youtube.upload + youtube.force-ssl)</p>
+        </div>
+        
+        <div class="highlight-box warning">
+            <strong>Important:</strong> Never commit config.json or youtube_token.json to git — they're in .gitignore
+        </div>
+    </section>
+    
+    <section id="quiz">
+        <h2>❓ Quick Quiz</h2>
+        
+        <div class="quiz">
+            <h4>Question: You want to test the script without producing the video. What flag do you use?</h4>
+            <div class="quiz-option">A) --news "topic" --produce</div>
+            <div class="quiz-option">B) --news "topic" --dry-run</div>
+            <div class="quiz-option">C) --news "topic" --test</div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>📚 Course generated by Doro's repo-to-course skill</p>
+        <p><a href="https://github.com/rushindrasinha/youtube-shorts-pipeline" style="color:var(--youtube);">View Original Repo</a></p>
+    </footer>
+    
+    <script>
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
